@@ -1,0 +1,42 @@
+ <html>
+<head>
+<script>
+function Nodo(id, label, title)
+{
+	this.id = id;
+	this.label = label;
+	this.title = title;
+}
+function showUser() {	
+    //document.getElementById("txtHint").innerHTML = xmlhttp.responseText;
+	var xhttp = new XMLHttpRequest();
+	var myJSON,i;
+	xhttp.onreadystatechange = function() {
+    	if (this.readyState == 4 && this.status == 200) 
+		{
+			var respuesta = this.responseText;
+		    myJSON = JSON.parse(respuesta);
+    	    document.getElementById("demo").innerHTML = respuesta;
+			//console.log(myJSON[0]);		
+			console.log("--------");
+			//console.log(myJSON[1]);
+			
+			for(i=0; i< myJSON[0].length; i++)
+			{console.log(myJSON[0][i].id);}	
+    	}
+  	};
+	xhttp.open("GET", "getNodesLinks.php", true);
+	xhttp.send();   
+}
+</script>
+</head>
+<body>
+
+<button onclick="showUser();"> Click me!!! </button>
+<p id= "demo"> </p>
+
+<br>
+<div id="txtHint"><b>Nodos: </b></div>
+
+</body>
+</html> 
