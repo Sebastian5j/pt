@@ -27,7 +27,7 @@ class manager:
 		responses = []
 		for connection in connections:
 			connection.connect()
-			response = connection.sendInstrunction(instruction)
+			response = connection.sendInstruction(instruction)
 			responses.append(response)
 			connection.disconnect()
 		return responses

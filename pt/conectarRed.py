@@ -21,4 +21,11 @@ class deviceConnection:
 	def disconnect(self):
 		self.conn.logout()
 		self.conn.close()
-
+"""
+device = deviceConnection('192.168.1.1','R1','sebas','1197sebas')
+device.connect()
+print(device.sendInstruction('sh ip int br'))
+#print(device.sendInstruction('ip dhcp excluded-address 10.0.0.0'))
+#device.sendInstruction('ip dhcp excluded-address 2.2.2.2')
+device.disconnect()
+"""

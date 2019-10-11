@@ -24,6 +24,71 @@
 <pre id="eventSpan"></pre>
 
 <script type="text/javascript">
+var comandos = []
+var idNodoGlobal = 0;	
+	function activateTerminal(idNodo)
+	{
+		idNodoGlobal = idNodo;
+		console.log("activando terminal para el nodo " + idNodo);
+		comandos = []
+		var textArea = document.getElementById("idTextArea");
+		var inputCommand = document.getElementById("idComando");
+		if(textArea && inputCommand)
+		{
+			textArea.remove();
+			inputCommand.remove();
+			console.log("en efecto hay un text area, lo borre");
+		}
+		else
+		{
+			console.log("no habia text area, lo agrego");		
+			var inputComando = document.createElement('input');
+			inputComando.setAttribute("id","idComando");
+			inputComando.value = "comando...";
+			inputComando.setAttribute("onkeypress","agregarComando(event);");
+			document.body.appendChild(inputComando);
+			//alert("ya meti el metodo");
+			var newTextArea = document.createElement('textarea');
+			newTextArea.setAttribute("id", "idTextArea");
+			newTextArea.cols = "100";	
+			newTextArea.rows = "40";
+			newTextArea.value = "Historial de dispositivo "+idNodo+"\n";
+			document.body.appendChild(newTextArea);	
+		}
+		
+	}
+	
+	function agregarComando(event)
+	{
+	//	alert("estoy reaccionando al teclado "+event.which);
+		var textArea = document.getElementById("idTextArea");
+		if(event.which == 13)
+		{
+			var inputCommand = document.getElementById("idComando");
+			//comandos.push("comando" : inputCommand.value);
+			//textArea.value += inputCommand.value + "\n";
+		
+			var xhttp = new XMLHttpRequest();
+
+			xhttp.onreadystatechange = function()
+			{
+				console.log(this.readyState);
+				console.log(this.status);
+				if(this.readyState == 4 && this.status == 200)
+				{
+					console.log(this.responseText);
+					textArea.value += this.responseText;
+				//document.getElementById("demo").innerHTML = this.responseText;
+				}
+			};
+			console.log("envio---------"+idNodoGlobal + ","+ inputCommand.value);
+			xhttp.open("GET", "mainSendInstruction.php?id="+idNodoGlobal+"&inst="+inputCommand.value, true);
+			xhttp.send()
+
+			inputCommand.value = "";
+		}
+		
+	}
 	function addEdges()
 	{		
 		var xhttp = new XMLHttpRequest();
@@ -39,14 +104,7 @@
 		xhttp.send();
 	}
 	function addNodeForm()
-	{
-		/*
-		var inputText = document.createElement("INPUT");
-		inputText.setAttribute("type","text");
-		inputText.setAttribute("value","Nombre de nuevo nodo");
-		document.body.appendChild(inputText);
-		*/
-		
+	{	
 		var nombre = document.getElementById("idNodo").value;
 		var ip = document.getElementById("idIPNodo").value;
 		var xhttp = new XMLHttpRequest();
@@ -130,6 +188,8 @@
     network.on("doubleClick", function (params) {
         params.event = "[original event]";
         document.getElementById('eventSpan').innerHTML = '<h2>doubleClick event:</h2>' + JSON.stringify(params, null, 4);
+		console.log('click event, getNodeAt returns: ' + this.getNodeAt(params.pointer.DOM));
+		activateTerminal(this.getNodeAt(params.pointer.DOM));
     });
     network.on("oncontext", function (params) {
         params.event = "[original event]";
@@ -199,6 +259,8 @@
 
 
 </script>
+
+
 <div id="demo">
 
 </div>
@@ -207,5 +269,13 @@ Nombre de dispostivo <input type="text" name = "nombreNodo" id = "idNodo" value=
 IP: <input type="text" name = "ipNodo" id = "idIPNodo" value="Nueva IP"><br>
  <button onclick="addNodeForm()">Agregar nodo</button>
 <button onclick="addEdges()">Agregar enlaces </button>
+
+<div> Seccion para enviar comandos </div>
+<!--
+Comando: <input type="text" name = "comando" id = "idComando" value="Nuevo comando"><br>
+<textarea id="idTextArea" rows="40" cols="50" disabled>
+Historial de terminal
+</textarea>
+-->
 </body>
 </html>
